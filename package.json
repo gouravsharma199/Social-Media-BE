@@ -1,0 +1,16 @@
+{
+  "name": "social-media-be",
+  "version": "1.0.0",
+  "description": "social media app backend",
+  "license": "ISC",
+  "author": "Gourav Sharma",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start" :"node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
