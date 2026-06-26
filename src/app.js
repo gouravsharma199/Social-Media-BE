@@ -3,17 +3,12 @@ const connectDb = require("./config/database");
 const {adminAuth} = require("./middlewares/auth");
 const app = express();
 
-app.use("/admin",adminAuth);
-
 const User = require("./models/user");
 
+app.use(express.json());
+
 app.post("/signup",async(req,res)=>{
-    const user = new User({
-        firstName:"Gourav",
-        lastName:"Sharma",
-        email:"gs@gmail.com",
-        password:"gs#120"
-    });
+    const user = new User(req.body);
     try{
     await user.save();
     res.send("sucessfull added to database");
@@ -23,20 +18,13 @@ app.post("/signup",async(req,res)=>{
 })
 
 
-
-
-
-
-
-
-
 connectDb().then(()=>{
     console.log("Database sucessfully connected");
     app.listen(222,()=>{
     console.log("server is running on 222");
 });
-}).catch((error)=>{
-    console.error("Data base have some error");
+}).catch((err)=>{
+    console.error("Data base have some error"+err.message);
 });
 
 
