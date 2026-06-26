@@ -1,17 +1,25 @@
 const express = require("express");
-
+const connectDb = require("./config/database");
+const {adminAuth} = require("./middlewares/auth");
 const app = express();
 
-const {adminAuth} = require("./middlewares/auth");
-
 app.use("/admin",adminAuth);
-app.get("/admin/allData",(req,res)=>{
-    res.send("admin can see all the data");
-});
 
+const User = require("./models/user");
 
-app.delete("/admin/delate",(req,res)=>{
-    res.send("admin is deleted all the data");
+app.post("/signup",async(req,res)=>{
+    const user = new User({
+        firstName:"Gourav",
+        lastName:"Sharma",
+        email:"gs@gmail.com",
+        password:"gs#120"
+    });
+    try{
+    await user.save();
+    res.send("sucessfull added to database");
+    }catch(err){
+        res.status(400).send("Error in saving data"+err.message)
+    }
 })
 
 
@@ -20,29 +28,39 @@ app.delete("/admin/delate",(req,res)=>{
 
 
 
-// app.get("/user",(req,res)=>{
-//     res.send({"Gourav":"kaamchor",Age:"27"});
-// });
-
-// app.post("/user",(req,res)=>{
-//     res.send("Post method work Perfect");
-// });
-
-// app.delete("/user",(req,res)=>{
-//     res.send("Delate successfully")
-// })
-
-// app.use("/abc",(req,res)=>{
-//     res.send("abc page");
-// });
-// app.use("/test",(req,res)=>{
-//     res.send("test page");
-// });
-// app.use("/",(req,res)=>{
-//     res.send("Home page adfsd");
-// });
 
 
-app.listen(222,()=>{
+connectDb().then(()=>{
+    console.log("Database sucessfully connected");
+    app.listen(222,()=>{
     console.log("server is running on 222");
 });
+}).catch((error)=>{
+    console.error("Data base have some error");
+});
+
+
+
+
+
+
+
+
+
+
+
+// app.get("/admin/allData",(req,res)=>{
+//      throw new Error("aa gyi error");
+//     res.send("admin can see all the data");  
+// });
+
+
+// app.delete("/admin/delate",(req,res)=>{
+//     res.send("admin is deleted all the data");
+// })
+
+// app.use("/",(error,req,res,next)=>{
+//     if(error){
+//         res.status(500).send("something went wrong");
+//     }
+// })
