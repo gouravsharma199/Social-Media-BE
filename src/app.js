@@ -7,6 +7,39 @@ const User = require("./models/user");
 
 app.use(express.json());
 
+app.get("/user",async(req,res)=>{
+
+    const userID = req.body.emailId
+    try{
+    const user = await User.find({emailId:userID});
+    if(user.length===0){
+        res.status(404).send("user not found");
+    }else{
+        res.send(user);
+    }
+    
+     }
+     catch(err) {
+        res.status(400).send("something went wrong")
+
+        }
+});
+
+
+app.get("/feed",async(req,res)=>{
+    try{
+        const user = await User.find({});
+        if(user.length===0){
+        res.status(404).send("user not found");
+    }else{
+        res.send(user);
+    }
+    }
+    catch(err){
+        res.status(404).send("User data not found"+err.message);
+    }
+})
+
 app.post("/signup",async(req,res)=>{
     const user = new User(req.body);
     try{
@@ -16,6 +49,34 @@ app.post("/signup",async(req,res)=>{
         res.status(400).send("Error in saving data"+err.message)
     }
 })
+
+app.delete("/user",async(req,res)=>{
+   const uId = req.body.uId;
+   console.log(uId);
+
+   try{
+    const user = await User.findByIdAndDelete(uId);
+    res.send("user deleted successfully"+user)
+   }
+   catch(err){
+    res.status(404).send("user is not delated"+err.message);
+
+   }
+});
+
+app.patch("/user",async(req,res)=>{
+ const userId = req.body.userId;
+ const data = req.body;
+try{
+  const user = await User.findByIdAndUpdate({_id:userId},data);
+  res.send("user updated sucessfully",user);
+}
+ catch(err){
+    res.status(404).send("user is not delated"+err.message);
+
+   }
+
+});
 
 
 connectDb().then(()=>{
