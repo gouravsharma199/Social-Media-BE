@@ -67,7 +67,7 @@ app.delete("/user",async(req,res)=>{
 app.patch("/user/:userId",async(req,res)=>{
     const userId = req.params.userId;
     const data = req.body;
-
+    //data sanatization
     try{
         const ALLOWED_UPDATE = ["age","gender","skills","about"];
         const isAllowed = Object.keys(data).every((key) =>ALLOWED_UPDATE.includes(key));
