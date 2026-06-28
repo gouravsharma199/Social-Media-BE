@@ -64,17 +64,28 @@ app.delete("/user",async(req,res)=>{
    }
 });
 
-app.patch("/user",async(req,res)=>{
- const userId = req.body.userId;
- const data = req.body;
-try{
-  const user = await User.findByIdAndUpdate({_id:userId},data);
-  res.send("user updated sucessfully",user);
-}
- catch(err){
-    res.status(404).send("user is not delated"+err.message);
+app.patch("/user/:userId",async(req,res)=>{
+    const userId = req.params.userId;
+    const data = req.body;
 
-   }
+    try{
+        const ALLOWED_UPDATE = ["age","gender","skills","about"];
+        const isAllowed = Object.keys(data).every((key) =>ALLOWED_UPDATE.includes(key));
+        if(!isAllowed){
+            throw new Error("update is not allowed")
+        }
+        if(data?.skills.length>10){
+            throw new Error("more then 10 skills not allowed");
+        }
+
+        const user = await User.findByIdAndUpdate({_id:userId},data,{runValidators:true});
+        res.send("user updated sucessfully",user);
+
+    }
+    catch(err){
+        res.status(404).send("user is not updated "+err.message);
+
+    }
 
 });
 
