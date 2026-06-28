@@ -1,6 +1,8 @@
 const express = require("express");
 const connectDb = require("./config/database");
 const {adminAuth} = require("./middlewares/auth");
+const {validateDataSign} = require("./utils/validate");
+const bcrypt = require('bcrypt');
 const app = express();
 
 const User = require("./models/user");
@@ -41,12 +43,29 @@ app.get("/feed",async(req,res)=>{
 })
 
 app.post("/signup",async(req,res)=>{
-    const user = new User(req.body);
+
     try{
+
+    //validate data
+    validateDataSign(req);
+
+    const {firstName,lastName,emailId,password} = req.body;
+
+    //Encripting the password
+    const hashPassword = await new bcrypt.hash(password,10);
+
+    
+    // Creating new intace of the User model
+    const user = new User(
+       { firstName,
+        lastName,
+        emailId,
+        password:hashPassword}
+    );    
     await user.save();
     res.send("sucessfull added to database");
     }catch(err){
-        res.status(400).send("Error in saving data"+err.message)
+        res.status(400).send("Error in saving data "+err.message)
     }
 })
 
@@ -98,29 +117,3 @@ connectDb().then(()=>{
 }).catch((err)=>{
     console.error("Data base have some error"+err.message);
 });
-
-
-
-
-
-
-
-
-
-
-
-// app.get("/admin/allData",(req,res)=>{
-//      throw new Error("aa gyi error");
-//     res.send("admin can see all the data");  
-// });
-
-
-// app.delete("/admin/delate",(req,res)=>{
-//     res.send("admin is deleted all the data");
-// })
-
-// app.use("/",(error,req,res,next)=>{
-//     if(error){
-//         res.status(500).send("something went wrong");
-//     }
-// })
