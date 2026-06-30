@@ -6,6 +6,7 @@ const {isStrongPassword } = require("validator");
 const bcrypt = require('bcrypt');
 const User = require("./models/user");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 //server intance
 const app = express();
@@ -86,16 +87,17 @@ app.post("/login",async(req,res)=>{
     try{
         const {emailId,password} = req.body;
         const user = await User.findOne({emailId:emailId});
-
+        
         if(!user){
             throw new Error("invalid credentials");
         }
         const isPassword = await bcrypt.compare(password,user.password);
-
+        
         if(isPassword){
-
+            //JWT token creation
+            const token =await jwt.sign({_id:user._id},"gourav@123")
             //creating cookie
-            res.cookie("token","randomNumberAndValue100");
+            res.cookie("token",token);
             res.send("user credentials are valid");
         }else{
                 throw new Error("invalid credentials");
@@ -106,15 +108,27 @@ app.post("/login",async(req,res)=>{
 });
 
 //profile update API
-app.post("/profile",async(req,res)=>{
-    const cookies = req.cookies;
+app.get("/profile",async(req,res)=>{
+   try{ const cookies = req.cookies;
 
     const {token} = cookies;
+    if(!token){
+        throw new Error("invalid token");
+    }
     //check token validation
+    const decodedToken = await jwt.verify(token,"gourav@123");
+    const {_id} = decodedToken;
+    //finding user in database
+    const user = await User.findById(_id);
+    if(!user){
+        throw new Error("user is not exit in database");
+    }
     
+    res.send(user)
+    }catch(err){
+    res.status(404).send("Profile have some error "+err.message);
 
-    console.log(cookies);
-    res.send("cookie sending")
+    }
 
 });
 
@@ -129,7 +143,7 @@ app.delete("/user",async(req,res)=>{
     res.send("user deleted successfully"+user)
    }
    catch(err){
-    res.status(404).send("user is not delated"+err.message);
+    res.status(404).send("user is not delated "+err.message);
 
    }
 });
