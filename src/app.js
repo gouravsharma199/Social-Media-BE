@@ -2,13 +2,16 @@ const express = require("express");
 const connectDb = require("./config/database");
 const {adminAuth} = require("./middlewares/auth");
 const {validateDataSign} = require("./utils/validate");
+const {isStrongPassword } = require("validator");
 const bcrypt = require('bcrypt');
-const app = express();
-
 const User = require("./models/user");
 
+//server intance
+const app = express();
 app.use(express.json());
 
+
+//Single User Details
 app.get("/user",async(req,res)=>{
 
     const userID = req.body.emailId
@@ -27,7 +30,7 @@ app.get("/user",async(req,res)=>{
         }
 });
 
-
+//All user Details API
 app.get("/feed",async(req,res)=>{
     try{
         const user = await User.find({});
@@ -42,6 +45,8 @@ app.get("/feed",async(req,res)=>{
     }
 })
 
+
+//Fist time user Signup or Adding user details to DB
 app.post("/signup",async(req,res)=>{
 
     try{
@@ -69,6 +74,31 @@ app.post("/signup",async(req,res)=>{
     }
 })
 
+
+
+// Login user,sending and creating Cookie and JWT
+app.post("/login",async(req,res)=>{
+    try{
+    const {emailId,password} = req.body;
+
+    const user = await User.findOne({emailId:emailId});
+    if(!user){
+        throw new Error("invalid credentials");
+    }
+    const isPassword = await bcrypt.compare(password,user.password);
+
+    if(isPassword){
+        res.send("user credentials are valid");
+    }else{
+            throw new Error("invalid credentials");
+    }
+}catch(err){
+    res.status(400).send("Error"+err.message);
+}
+});
+
+
+//delate the user by id
 app.delete("/user",async(req,res)=>{
    const uId = req.body.uId;
    console.log(uId);
@@ -83,6 +113,8 @@ app.delete("/user",async(req,res)=>{
    }
 });
 
+
+//update the user details and check user can't add important fiels like Email
 app.patch("/user/:userId",async(req,res)=>{
     const userId = req.params.userId;
     const data = req.body;
@@ -108,7 +140,7 @@ app.patch("/user/:userId",async(req,res)=>{
 
 });
 
-
+//connectiong DB then start the server
 connectDb().then(()=>{
     console.log("Database sucessfully connected");
     app.listen(222,()=>{
