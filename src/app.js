@@ -5,10 +5,17 @@ const {validateDataSign} = require("./utils/validate");
 const {isStrongPassword } = require("validator");
 const bcrypt = require('bcrypt');
 const User = require("./models/user");
+const cookieParser = require("cookie-parser");
 
 //server intance
 const app = express();
+
+
+//middleware to read Json data
 app.use(express.json());
+
+//middlware for the Cookies
+app.use(cookieParser());
 
 
 //Single User Details
@@ -74,27 +81,41 @@ app.post("/signup",async(req,res)=>{
     }
 })
 
-
-
 // Login user,sending and creating Cookie and JWT
 app.post("/login",async(req,res)=>{
     try{
-    const {emailId,password} = req.body;
+        const {emailId,password} = req.body;
+        const user = await User.findOne({emailId:emailId});
 
-    const user = await User.findOne({emailId:emailId});
-    if(!user){
-        throw new Error("invalid credentials");
-    }
-    const isPassword = await bcrypt.compare(password,user.password);
-
-    if(isPassword){
-        res.send("user credentials are valid");
-    }else{
+        if(!user){
             throw new Error("invalid credentials");
+        }
+        const isPassword = await bcrypt.compare(password,user.password);
+
+        if(isPassword){
+
+            //creating cookie
+            res.cookie("token","randomNumberAndValue100");
+            res.send("user credentials are valid");
+        }else{
+                throw new Error("invalid credentials");
     }
 }catch(err){
     res.status(400).send("Error"+err.message);
 }
+});
+
+//profile update API
+app.post("/profile",async(req,res)=>{
+    const cookies = req.cookies;
+
+    const {token} = cookies;
+    //check token validation
+    
+
+    console.log(cookies);
+    res.send("cookie sending")
+
 });
 
 
