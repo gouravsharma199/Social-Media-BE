@@ -59,7 +59,7 @@ app.post("/login",async(req,res)=>{
         
         if(isPassword){
             //JWT token creation
-            const token =await jwt.sign({_id:user._id},"gourav@123")
+            const token =await jwt.sign({_id:user._id},"gourav@123",{expiresIn:"0d"})
             //creating cookie
             res.cookie("token",token);
             res.send("user credentials are valid");
