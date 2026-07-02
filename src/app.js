@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 //server intance
 const app = express();
 
+
 //middleware to read Json data
 app.use(express.json());
 app.use(cookieParser());
