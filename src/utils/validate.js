@@ -12,4 +12,11 @@ const validateDataSign = (req)=>{
     }
 }
 
-module.exports = {validateDataSign};
+const validateProfileEdit = (req)=>{
+    const allowedFields = ["firstName","lastName","gender","age","skills","about","photoURL"];
+
+    const validEditFields = Object.keys(req.body).every((field)=>allowedFields.includes(field));
+    return validEditFields;
+}
+
+module.exports = {validateDataSign,validateProfileEdit};
