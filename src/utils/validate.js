@@ -19,4 +19,9 @@ const validateProfileEdit = (req)=>{
     return validEditFields;
 }
 
+
+// const isPasswordValid = (req)=>{
+
+// }
+
 module.exports = {validateDataSign,validateProfileEdit};

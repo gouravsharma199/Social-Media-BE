@@ -32,6 +32,21 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
     catch(err){
         res.status(400).send("Error"+err.message);
     }
+});
+
+profileRouter.patch("/profile/changePassword",userAuth,async(req,res)=>{
+    try{
+        const {emailId,password} = req.body;
+        const user = await User.findOne({emailId:emailId});
+        if(!user){
+            throw new Error("password did not match");
+        }
+        const isPassword = await user.validatePassword(password);
+
+        }
+    catch(err){
+                res.status(400).send("Error"+err.message);
+        }
 })
 
 module.exports = profileRouter;
