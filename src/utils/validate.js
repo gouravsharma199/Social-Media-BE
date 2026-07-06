@@ -20,8 +20,9 @@ const validateProfileEdit = (req)=>{
 }
 
 
-// const isPasswordValid = (req)=>{
+const isPasswordValid = (req)=>{
+    const {password} = req.body;
+    const user = await User.findOne({emailId:emailId});
+}
 
-// }
-
-module.exports = {validateDataSign,validateProfileEdit};
+module.exports = {validateDataSign,validateProfileEdit,isPasswordValid};

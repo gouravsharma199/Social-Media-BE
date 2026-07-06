@@ -2,7 +2,7 @@ const express = require("express");
 
 const profileRouter = express.Router();
 const {userAuth} = require("../middlewares/auth");
-const {validateProfileEdit} = require("../utils/validate");
+const {validateProfileEdit,isPasswordValid} = require("../utils/validate");
 
 //profile update API
 profileRouter.get("/profile/view",userAuth,async(req,res)=>{
@@ -36,13 +36,10 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
 
 profileRouter.patch("/profile/changePassword",userAuth,async(req,res)=>{
     try{
-        const {emailId,password} = req.body;
-        const user = await User.findOne({emailId:emailId});
-        if(!user){
-            throw new Error("password did not match");
+        if(!isPasswordValid){
+            throw new Error("password is not strong or Valid")
         }
-        const isPassword = await user.validatePassword(password);
-
+         await user.save();
         }
     catch(err){
                 res.status(400).send("Error"+err.message);
