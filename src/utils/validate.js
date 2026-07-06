@@ -1,4 +1,5 @@
 const validator = require("validator");
+const User = require("../models/user");
 
 const validateDataSign = (req)=>{
     const {firstName,lastName,emailId,password} = req.body;
@@ -21,8 +22,19 @@ const validateProfileEdit = (req)=>{
 
 
 const isPasswordValid = (req)=>{
-    const {password} = req.body;
-    const user = await User.findOne({emailId:emailId});
+    const user = req.user;
+    const {oldPassword,newPassword} = req.body;
+    const isUser = user.validatePassword(oldPassword);
+    if(isUser){
+        console.log("old Password is Valid");
+        
+         if(!validator.isStrongPassword(newPassword)){
+        throw new Error("Please enter a Strong password ")
+        }
+    }
+   
+    
+    
 }
 
 module.exports = {validateDataSign,validateProfileEdit,isPasswordValid};

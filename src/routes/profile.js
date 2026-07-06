@@ -36,10 +36,12 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
 
 profileRouter.patch("/profile/changePassword",userAuth,async(req,res)=>{
     try{
-        if(!isPasswordValid){
+        if(!isPasswordValid(req)){
             throw new Error("password is not strong or Valid")
         }
+        const hashPassword = await bcrypt.hash(newPassword,10);
          await user.save();
+         res.send("password changes sucessfully")
         }
     catch(err){
                 res.status(400).send("Error"+err.message);
