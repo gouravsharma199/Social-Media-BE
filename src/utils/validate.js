@@ -24,4 +24,4 @@ const validateProfileEdit = (req)=>{
     
 
 
-module.exports = {validateDataSign,validateProfileEdit,isPasswordValid};
+module.exports = {validateDataSign,validateProfileEdit};
