@@ -5,6 +5,7 @@ const {userAuth} = require("../middlewares/auth");
 const {validateProfileEdit,isPasswordValid} = require("../utils/validate");
 const bcrypt = require("bcrypt");
 
+
 //profile update API
 profileRouter.get("/profile/view",userAuth,async(req,res)=>{
    try{
