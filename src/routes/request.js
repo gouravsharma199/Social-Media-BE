@@ -1,6 +1,8 @@
 const express = require("express");
 const {userAuth} = require("../middlewares/auth");
 const ConnectionReq = require("../models/connectionReq");
+const User = require("../models/user");
+const mongoose = require("mongoose");
 
 const requestRouter = express.Router();
 
@@ -27,7 +29,17 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
             .status(400)
             .json({message:"invalid status "+status})
         }
-        if(fromUserId ==toUserId){
+        const isValidReq = await mongoose.Types.ObjectId.isValid(toUserId)
+        if(!isValidReq){
+            return res.status(404).json({message:"userID of to sending the request is invalid"})
+        }
+
+        const toUser = await User.findById(toUserId);
+        if(!toUser){
+            return res.status(404).json({message:"user not found in DB"})
+        }
+
+        if(fromUserId.toString() ===toUserId){
             return res.status(400).send({message:"you can not send request to your self"});
         }
 
@@ -55,7 +67,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
         );
     }
     catch(err){
-        console.error(" error in user sending request "+err.message);
-    }
+    res.status(400).send("Error"+err.message);
+}
 });
 module.exports = requestRouter;
