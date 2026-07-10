@@ -26,5 +26,5 @@ connectDb().then(()=>{
     console.log("server is running on 222");
 });
 }).catch((err)=>{
-    console.error("Data base have some error"+err.message);
+    console.error("Data base have some error "+err.message);
 });

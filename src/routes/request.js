@@ -23,7 +23,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
         const toUserId = req.params.toUserId;
         const status = req.params.status;
 
-        const allowedStatus = ["interested","ignore"];
+        const allowedStatus = ["interested","ignored"];
         if(!allowedStatus.includes(status)){
             return res
             .status(400)
@@ -38,10 +38,10 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
         if(!toUser){
             return res.status(404).json({message:"user not found in DB"})
         }
-
-        if(fromUserId.toString() ===toUserId){
-            return res.status(400).send({message:"you can not send request to your self"});
-        }
+        // apply same validation on schema level but both are good
+        // if(fromUserId.toString() ===toUserId){
+        //     return res.status(400).send({message:"you can not send request to your self"});
+        // }
 
         const alreadyConnectionReq = await ConnectionReq.findOne({
             $or:[
@@ -61,7 +61,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
 
         res.json(
             {
-                message:`new connection request`,
+                message:req.user.firstName+" is "+status+" to "+toUser.firstName,
                 data,
             }
         );
