@@ -70,4 +70,39 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
     res.status(400).send("Error"+err.message);
 }
 });
+
+
+
+
+requestRouter.post("/request/review/:status/:reqId",userAuth,async(req,res)=>{
+   
+    try{
+        const loggedInUser = req.user;
+        const {status,reqId} = req.params;
+
+        const allowedStatus = ["accepted","rejected"];
+        if(!allowedStatus.includes(status)){
+            return res.status(400).json({message:"status is not valid"});
+        }
+
+
+        const connectionReq = await ConnectionReq.findOne({
+            _id:reqId,
+            toUserId:loggedInUser._id,
+            status:"interested"
+        });
+        if(!connectionReq){
+            return res.status(404).json({message:"connection Req is not valid"})
+        }
+
+        connectionReq.status = status;
+        const data = await connectionReq.save();
+
+        res.json({message:"connection Request : "+status, data});
+
+    }
+    catch(err){
+    res.status(400).send("Error "+err.message);
+    }
+})
 module.exports = requestRouter;
