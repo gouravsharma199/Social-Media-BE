@@ -12,7 +12,7 @@ requestRouter.post("/connectionRequest",userAuth,async(req,res)=>{
         res.send(user.firstName+" sended a connection request")
 }
     catch(err){
-        console.error(" error in user sending request "+err.message);
+        res.status(400).send(" error in user sending request "+err.message);
     }
 })
 
