@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
-const { applyTimestamps } = require("./user");
+// const { applyTimestamps } = require("./user");
 
 const connectionReqSchema = new mongoose.Schema({
     fromUserId:{
-        type:mongoose.Schema.Types.ObjectId
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
     toUserId:{
         type: mongoose.Schema.Types.ObjectId
