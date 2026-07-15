@@ -82,7 +82,7 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
                 {_id:{$ne:loggedInUser._id}}
             ]
         }).select(SAFE_DATA).skip(skip).limit(limit);
-        // console.log(users);
+        
 
         res.send(users);
     }catch(err){
