@@ -55,8 +55,10 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
     try{
         const loggedInUser = req.user;
         const page = parseInt(req.query.page)|| 1;
+
         let limit = parseInt(req.query.limit) || 10;
         limit = limit>50?50:limit;
+
         const skip = (page-1)*limit;
             
         const connectionReq = await ConnectionReq.find({
@@ -64,7 +66,8 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
             {toUserId:loggedInUser._id}]
         }).select("fromUserId toUserId");
         //select is filter the other data only showing the id
-        // console.log(connectionReq);
+
+     
         //Set() is used to remove duplicate data to store
         const hideUserFeed = new Set();
 
