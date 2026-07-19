@@ -83,7 +83,7 @@ Social-Media-BE
 ## Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/social-media-be.git
+git clone https://github.com/gouravsharma199/social-media-be.git
 ```
 
 Move into project
