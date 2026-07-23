@@ -3,6 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
 const validateDataSign = (req)=>{
+    
     const {firstName,lastName,emailId,password} = req.body;
     if(!firstName || !lastName){
         throw new Error("please enter a valid name ")
